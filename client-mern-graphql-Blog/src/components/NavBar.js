@@ -12,6 +12,8 @@ const NavBar = () => {
   const path = useLocation();
   const token = sessionStorage.getItem("blog");
   const user = JSON.parse(sessionStorage.getItem("user"));
+  const userDetails = [];
+  userDetails.push(user);
   const [active, setActive] = useState({
     home: true,
     login: false,
@@ -67,6 +69,7 @@ const NavBar = () => {
       });
     }
   };
+  console.log(userDetails)
 
   const handleLogout = () => {
     sessionStorage.removeItem("blog");
@@ -123,10 +126,6 @@ const NavBar = () => {
 
             {token && (
               <li onClick={handleLogout}>
-                <Select
-                  placeholder='Select your country'
-                  options={countryOptions}
-                />
                 <Link
                   to='/login'
                   className='links'

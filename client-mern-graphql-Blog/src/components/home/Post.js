@@ -4,8 +4,14 @@ import moment from "moment";
 import { useHistory } from "react-router-dom";
 import { privates } from "../utils/session";
 import { useState } from "react";
+import { BlogContext } from "../blogContext/BlogProvider";
 
-const Post = ({ post: { body, username, email, createdAt, likes, comments } }) => {
+const Post = ({
+  post: { _id, body, username, email, createdAt, likes, comments }
+}) => {
+  const { likePost, like_style } = useContext(BlogContext);
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  console.log(user["username"])
   return (
     <SubGrid>
       <div className='user'>
@@ -14,8 +20,7 @@ const Post = ({ post: { body, username, email, createdAt, likes, comments } }) =
           <p>{username}</p>
           <p className='date'>
             <span>
-              {moment(createdAt).fromNow(true)}{" "}
-              <i className='fas fa-users'></i>
+              {moment(createdAt).fromNow(true)} <i className='fas fa-users'></i>
             </span>
           </p>
         </div>
@@ -24,8 +29,12 @@ const Post = ({ post: { body, username, email, createdAt, likes, comments } }) =
         <p>{body}</p>
       </div>
       <div className='comment'>
-        <span>
-          <i style={{}} className='fas fa-heart'></i> {likes.length}
+        <span onClick={() => likePost(_id)}>
+          <i
+            style={like_style === _id ? { color: "orangered" } : {}}
+            className='fas fa-heart'
+          ></i>{" "}
+          {likes.length}
         </span>
         <div>
           <span style={{ color: "orangered", paddingRight: "1.3rem" }}>

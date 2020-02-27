@@ -80,8 +80,9 @@ module.exports.deletePost = async (req, res) => {
 module.exports.likePost = async (req, res) => {
   const user = await req.user;
   try {
-    const { likeId } = req.params;
-    const posts = await Posts.findById(likeId);
+    const id = req.body.id;
+    console.log(id);
+    const posts = await Posts.findById(id);
     if (posts) {
       if (posts.likes.find(like => like.username === user.username)) {
         posts.likes = posts.likes.filter(
@@ -152,8 +153,8 @@ module.exports.deleteComment = async (req, res) => {
         post.comments = filtered;
         await post.save();
       }
-    }else{
-      res.json({error: "Comment not found"})
+    } else {
+      res.json({ error: "Comment not found" });
     }
     res.json({ data: post });
   } catch (error) {
@@ -174,8 +175,8 @@ module.exports.updateComment = async (req, res) => {
       const finded = post.comments.find(comment => comment.id === req.body.id);
       finded.body = body;
       await post.save();
-    }else{
-      res.json({error: "Comment not found"})
+    } else {
+      res.json({ error: "Comment not found" });
     }
     res.json({ data: post });
   } catch (error) {}

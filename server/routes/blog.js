@@ -22,7 +22,7 @@ router.post("/posts", auth, createPost);
 
 router.patch("/posts/:updateId", auth, updatePost);
 
-router.post("/likes/:likeId", auth, likePost);
+router.post("/likes", auth, likePost);
 
 router.post("/comments/:commentId", auth, createComment);
 

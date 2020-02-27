@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styled from "styled-components";
+import { BlogContext } from "../blogContext/BlogProvider";
 
 const PostForm = () => {
+  const { addPost } = useContext(BlogContext);
   const [form, setForm] = useState({
     body: ""
   });
@@ -14,9 +16,17 @@ const PostForm = () => {
     });
   };
 
+  const onsubmit = e => {
+    e.preventDefault();
+    addPost(form);
+    setForm({
+      body: ""
+    });
+  };
+
   return (
     <Form>
-      <form>
+      <form onSubmit={onsubmit}>
         <div className='input-group'>
           <i className='fas fa-blog icon'></i>
           <input

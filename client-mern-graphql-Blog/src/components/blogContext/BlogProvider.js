@@ -1,20 +1,27 @@
-import React, { createContext, useReducer, useEffect } from "react";
+import React, { createContext, useReducer, useEffect, useState } from "react";
 import axios from "axios";
 import reducer from "./reducer";
-import { GET_POSTS } from "./blogTypes";
+import { GET_POSTS, ADD_POST, LIKE_POST } from "./blogTypes";
 
 export const BlogContext = createContext();
 
 const initialState = {
-  posts: []
+  posts: [],
+  added_post: {},
+  like_post: {}
 };
 
 export const BlogProvider = ({ children }) => {
+  const url = `http://localhost:5005/api/posts`;
+  const [tracker, setTracker] = useState({
+    updateState: false,
+    like_style: ""
+  });
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const getPosts = async () => {
     try {
-      const response = await axios(`http://localhost:5005/api/posts`, {
+      const response = await axios.get(url, {
         headers: {
           "Content-Type": "application/json"
         }
@@ -23,27 +30,55 @@ export const BlogProvider = ({ children }) => {
     } catch (error) {}
   };
 
-  const addPost = async (body) => {
-    const token = sessionStorage.getItem("auth")
+  const addPost = async body => {
+    const token = sessionStorage.getItem("blog");
     try {
-      const response = await axios(`http://localhost:5005/api/posts`, body, {
+      const response = await axios.post(url, body, {
         headers: {
           "Content-Type": "application/json",
-          "auth": token
+          auth: token
         }
       });
-      dispatch({ type: GET_POSTS, payload: response.data.data });
+      setTracker({
+        ...tracker,
+        updateState: !tracker.updateState
+      });
+      dispatch({ type: ADD_POST, payload: response.data.data });
     } catch (error) {}
   };
-  console.log(state.posts[0]);
+
+  const likePost = async id => {
+    const token = sessionStorage.getItem("blog");
+    try {
+      const response = await axios.post(
+        `http://localhost:5005/api/likes`,
+        { id },
+        {
+          headers: {
+            auth: token
+          }
+        }
+      );
+      console.log(response.data);
+      setTracker({
+        updateState: !tracker.updateState,
+        like_style: id
+      });
+      dispatch({ type: LIKE_POST, payload: response.data });
+    } catch (error) {
+      // dispatch({typ})
+    }
+  };
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [tracker.updateState]);
   return (
     <BlogContext.Provider
       value={{
         posts: state.posts[0],
-        addPost
+        addPost,
+        likePost,
+        like_style: tracker.like_style
       }}
     >
       {children}
