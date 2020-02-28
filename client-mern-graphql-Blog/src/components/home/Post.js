@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import moment from "moment";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { privates } from "../utils/session";
 import { useState } from "react";
 import { BlogContext } from "../blogContext/BlogProvider";
@@ -11,7 +11,7 @@ const Post = ({
 }) => {
   const { likePost, like_style } = useContext(BlogContext);
   const user = JSON.parse(sessionStorage.getItem("user"));
-  console.log(user["username"])
+  console.log(user["username"]);
   return (
     <SubGrid>
       <div className='user'>
@@ -33,15 +33,16 @@ const Post = ({
           <i
             style={like_style === _id ? { color: "orangered" } : {}}
             className='fas fa-heart'
-          ></i>{" "}
-          {likes.length}
+          ></i>{" "} like {likes.length}
         </span>
         <div>
           <span style={{ color: "orangered", paddingRight: "1.3rem" }}>
-            <i className='fas fa-trash'></i>
+            {/* <i className='fas fa-trash'></i> */}
           </span>
           <span>
-            <i className='fas fa-comments'></i> {comments.length}
+            <Link className='link' to={`/comments/${_id}`}>
+              <i className='fas fa-comments'></i> {comments.length}
+            </Link>
           </span>
         </div>
       </div>
@@ -87,6 +88,10 @@ const SubGrid = styled.div`
     padding: 5px 0;
     span:first-child {
       /* color: #999; */
+    }
+    .link{
+      text-decoration: none;
+      color: burlywood;
     }
     .trash {
       padding-right: 1.3rem;

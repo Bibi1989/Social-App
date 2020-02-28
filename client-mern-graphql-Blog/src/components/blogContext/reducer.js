@@ -1,5 +1,5 @@
 import React from "react";
-import { ADD_POST, GET_POSTS, LIKE_POST } from "./blogTypes";
+import { ADD_POST, GET_POSTS, LIKE_POST, SINGLE_POST, CREATE_COMMENT } from "./blogTypes";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -17,6 +17,16 @@ const reducer = (state, action) => {
       return {
         ...state,
         like_post: action.payload
+      };
+    case SINGLE_POST:
+      return {
+        ...state,
+        single_post: action.payload
+      };
+    case CREATE_COMMENT:
+      return {
+        ...state,
+        created_comment: action.payload
       };
     default:
       return state;

@@ -9,6 +9,7 @@ import PostBody from "./components/home/PostBody";
 import PrivateRoute from "./components/privateRoute/privateRoute";
 import { BlogProvider } from "./components/blogContext/BlogProvider";
 import { UserProvider } from "./components/userContext/UserProvider";
+import Comments from "./components/home/Comments";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <NavBar />
           <Switch>
             <PrivateRoute exact path='/' component={PostBody} />
+            <PrivateRoute exact path='/comments/:commentId' component={Comments} />
             <Route exact path='/login'>
               <Login />
             </Route>

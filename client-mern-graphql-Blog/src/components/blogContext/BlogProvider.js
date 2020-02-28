@@ -1,14 +1,23 @@
 import React, { createContext, useReducer, useEffect, useState } from "react";
 import axios from "axios";
 import reducer from "./reducer";
-import { GET_POSTS, ADD_POST, LIKE_POST } from "./blogTypes";
+import {
+  GET_POSTS,
+  ADD_POST,
+  LIKE_POST,
+  SINGLE_POST,
+  CREATE_COMMENT
+} from "./blogTypes";
 
 export const BlogContext = createContext();
 
 const initialState = {
   posts: [],
   added_post: {},
-  like_post: {}
+  like_post: {},
+  single_post: {},
+  comments: [],
+  created_comment: {}
 };
 
 export const BlogProvider = ({ children }) => {
@@ -17,6 +26,9 @@ export const BlogProvider = ({ children }) => {
     updateState: false,
     like_style: ""
   });
+  const [comment, setComment] = useState([]);
+  const [like, setLike] = useState([]);
+  const [iii, setIII] = useState("");
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const getPosts = async () => {
@@ -27,6 +39,26 @@ export const BlogProvider = ({ children }) => {
         }
       });
       dispatch({ type: GET_POSTS, payload: response.data.data });
+    } catch (error) {}
+  };
+
+  const getAPost = async id => {
+    const token = sessionStorage.getItem("blog");
+    try {
+      const response = await axios.get(
+        `http://localhost:5005/api/posts/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            auth: token
+          }
+        }
+      );
+      const comments = response.data.data.comments;
+      const likes = response.data.data.likes;
+      setComment(comments);
+      setLike(likes);
+      dispatch({ type: SINGLE_POST, payload: response.data.data });
     } catch (error) {}
   };
 
@@ -59,7 +91,6 @@ export const BlogProvider = ({ children }) => {
           }
         }
       );
-      console.log(response.data);
       setTracker({
         updateState: !tracker.updateState,
         like_style: id
@@ -69,6 +100,27 @@ export const BlogProvider = ({ children }) => {
       // dispatch({typ})
     }
   };
+
+  const createComment = async (body, id) => {
+    const token = sessionStorage.getItem("blog");
+    try {
+      setIII(id)
+      const response = await axios.post(
+        `http://localhost:5005/api/comments/${id}`,
+        {body},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            auth: token
+          }
+        }
+      );
+      console.log(response)
+      dispatch({ type: CREATE_COMMENT, payload: response.data.data });
+    } catch (error) {}
+  };
+
+  
   useEffect(() => {
     getPosts();
   }, [tracker.updateState]);
@@ -78,7 +130,12 @@ export const BlogProvider = ({ children }) => {
         posts: state.posts[0],
         addPost,
         likePost,
-        like_style: tracker.like_style
+        like_style: tracker.like_style,
+        single_post: state.single_post,
+        getAPost,
+        createComment,
+        comment,
+        like
       }}
     >
       {children}
