@@ -13,28 +13,27 @@ const Register = () => {
     username: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
-  const handleInput = event => {
+  const handleInput = (event) => {
     const { value } = event.target;
     const { name } = event.target;
     setForm({ ...form, [name]: value });
   };
 
-  const handleRegister = event => {
+  const handleRegister = (event) => {
     event.preventDefault();
     if (form.password !== form.confirmPassword) {
       return setErrors("Password do not match");
     }
     register(form);
-    if (register_errors) return;
-    window.location.href = "http://localhost:3002/";
+    return history.push("/");
     setForm({
       username: "",
       email: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
     });
   };
 
@@ -123,11 +122,16 @@ const Register = () => {
 };
 
 const Form = styled.div`
-  height: 90vh;
+  height: 70vh;
+  width: 50%;
+  margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0% 20%;
+  box-shadow: 0 3px 15px #ccc;
+  border-radius: 1em;
+  margin-top: 5%;
+
   .error {
     color: red;
   }
@@ -170,7 +174,7 @@ const Form = styled.div`
       display: block;
       padding: 10px 25px;
       font-size: 1.1rem;
-      border-radius: 5px;
+      border-radius: 30px;
       outline: none;
       border: 0.4px solid #eee;
       box-shadow: 0 3px 15px #eee;

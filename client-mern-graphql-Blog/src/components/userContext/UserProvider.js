@@ -9,8 +9,8 @@ const REGISTER_ERROR = "REGISTER_ERROR";
 const LOGIN_ERROR = "LOGIN_ERROR";
 
 const initialState = {
-  register: {},
-  login: {},
+  register_data: {},
+  login_data: {},
   register_errors: {},
   login_errors: {}
 };
@@ -20,12 +20,12 @@ const reducer = (state, action) => {
     case REGISTER:
       return {
         ...state,
-        register: action.payload
+        register_data: action.payload
       };
     case LOGIN:
       return {
         ...state,
-        login: action.payload
+        login_data: action.payload
       };
     case REGISTER_ERROR:
       return {

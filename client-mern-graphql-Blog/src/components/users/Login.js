@@ -1,37 +1,34 @@
 import React, { useState, useContext } from "react";
 import styled from "styled-components";
-import { useHistory } from "react-router-dom";
-import logo from "../../logo.svg";
+import { useHistory, useLocation } from "react-router-dom";
+import { Button } from "semantic-ui-react";
 import { UserContext } from "../userContext/UserProvider";
 import { publics } from "../utils/session";
 
 const Login = () => {
   const history = useHistory();
+  const loc = useLocation();
+  const port = window.location.port;
+  const path = loc;
+  console.log(port);
   publics(history);
   const { login, login_errors } = useContext(UserContext);
   const [form, setForm] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
-  const handleInput = event => {
+  const handleInput = (event) => {
     const { value } = event.target;
     const { name } = event.target;
     setForm({ ...form, [name]: value });
   };
 
-  const handleLogin = event => {
+  const handleLogin = (event) => {
     event.preventDefault();
     console.log(login_errors);
     login(form);
-    if (login_errors.email === undefined || login_errors.password === undefined)
-      return;
-    history.push('/');
-
-    setForm({
-      email: "",
-      password: ""
-    });
+    return history.push("/");
   };
 
   // if (sessionStorage.getItem("auth")) {
@@ -39,9 +36,9 @@ const Login = () => {
   // }
 
   return (
-    <Form>
-      <h1>Login</h1>
-      <form onSubmit={handleLogin}>
+    <Container>
+      <Form onSubmit={handleLogin}>
+        <h1>Login</h1>
         <div>
           <i className='fa fa-envelope'></i>
           <input
@@ -49,7 +46,7 @@ const Login = () => {
               login_errors.email
                 ? {
                     border: "0.3px solid #ff00007a",
-                    boxShadow: "0 2px 15px #ff00007a"
+                    boxShadow: "0 2px 15px #ff00007a",
                   }
                 : {}
             }
@@ -69,7 +66,7 @@ const Login = () => {
               login_errors.password
                 ? {
                     border: "0.3px solid #ff00007a",
-                    boxShadow: "0 2px 10px #ff00007a"
+                    boxShadow: "0 2px 10px #ff00007a",
                   }
                 : {}
             }
@@ -82,71 +79,76 @@ const Login = () => {
             onChange={handleInput}
           />
         </div>
-        <button type='submit'>
+        <Button type='submit' className='button'>
           <i className='fa fa-share-square'></i> Login
-        </button>
-      </form>
-    </Form>
+        </Button>
+      </Form>
+    </Container>
   );
 };
 
-const Form = styled.div`
-  height: 90vh;
+export const Container = styled.div`
+  padding-top: 10%;
+`;
+
+export const Form = styled.form`
+  width: 50%;
+  height: 40vh;
+  padding: 1em;
+  margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0% 20%;
+  align-items: center;
+  box-shadow: 0 3px 15px #ccc;
+  border-radius: 1em;
+
   .error {
     color: red;
   }
+
   h1 {
     font-size: 3rem;
     color: teal;
     text-align: center;
     padding-bottom: 1.5rem;
   }
-  form {
-    width: 100%;
-    display: block;
-    div {
-      width: 80%;
-      margin: auto;
-      position: relative;
-      top: 0;
-      i {
-        position: absolute;
-        top: 50%;
-        left: 10px;
-        transform: translateY(-50%);
-        color: teal;
-      }
-      input {
-        width: 100%;
-        padding: 15px 30px;
-        margin: 15px 0;
-        border-radius: 5px;
-        outline: none;
-        border: 0.4px solid #eee;
-        box-shadow: 0 3px 15px #eee;
 
-        &:focus {
-          background: #f1f1f1;
-        }
-      }
+  div {
+    width: 100%;
+    margin: auto;
+    position: relative;
+    top: 0;
+    i {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      color: teal;
     }
-    button {
-      display: block;
-      padding: 10px 25px;
-      font-size: 1.1rem;
+    input {
+      width: 100%;
+      padding: 15px 30px;
+      margin: 15px 0;
       border-radius: 5px;
       outline: none;
       border: 0.4px solid #eee;
       box-shadow: 0 3px 15px #eee;
-      background: teal;
-      color: #eee;
-      margin: 1rem auto;
-      cursor: pointer;
+
+      &:focus {
+        background: #f1f1f1;
+      }
     }
+  }
+  .button {
+    display: block;
+    border-radius: 30px;
+    padding: 1em 2.5em;
+    outline: none;
+    background: teal;
+    color: #eee;
+    margin: 1rem auto;
+    cursor: pointer;
   }
 `;
 

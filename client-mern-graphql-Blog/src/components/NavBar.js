@@ -2,10 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { Select } from "semantic-ui-react";
+import { useSelector, useDispatch } from "react-redux";
+import { getAllPosts } from "./BlogRedux/store";
 
 const activeBorder = {
   color: "teal",
-  borderBottom: "5px solid teal"
+  borderBottom: "5px solid teal",
 };
 
 const NavBar = () => {
@@ -14,33 +16,43 @@ const NavBar = () => {
   const user = JSON.parse(sessionStorage.getItem("user"));
   const userDetails = [];
   userDetails.push(user);
+
+  const dispatch = useDispatch();
+  const posts = useSelector(({ posts: { posts } }) => posts);
+
+  console.log({ blog: posts });
+
+  useEffect(() => {
+    getAllPosts(dispatch);
+  }, []);
+
   const [active, setActive] = useState({
     home: true,
     login: false,
     register: false,
-    logouts: false
+    logouts: false,
   });
-  const handleClick = link => {
+  const handleClick = (link) => {
     if (link === "home") {
       setActive({
         home: true,
         login: false,
         register: false,
-        logouts: false
+        logouts: false,
       });
     } else if (link === "login") {
       setActive({
         home: false,
         login: true,
         register: false,
-        logouts: false
+        logouts: false,
       });
     } else if (link === "register") {
       setActive({
         home: false,
         login: false,
         register: true,
-        logouts: false
+        logouts: false,
       });
     }
   };
@@ -51,25 +63,25 @@ const NavBar = () => {
         home: true,
         login: false,
         register: false,
-        logouts: false
+        logouts: false,
       });
     } else if (path.pathname === "/login") {
       setActive({
         home: false,
         login: true,
         register: false,
-        logouts: false
+        logouts: false,
       });
     } else if (path.pathname === "/register") {
       setActive({
         home: false,
         login: false,
         register: true,
-        logouts: false
+        logouts: false,
       });
     }
   };
-  console.log(userDetails)
+  console.log(userDetails);
 
   const handleLogout = () => {
     sessionStorage.removeItem("blog");
@@ -145,8 +157,9 @@ const NavBar = () => {
 export default NavBar;
 
 const Nav = styled.div`
-  padding: 1rem 10%;
-  background: #f1f1f1;
+  padding: 1% 20%;
+  background: #f4f4f4;
+  margin-bottom: 3%;
   ul {
     list-style: none;
     display: flex;

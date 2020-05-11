@@ -1,70 +1,73 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { BlogContext } from "../blogContext/BlogProvider";
+import { addPost } from "../BlogRedux/store";
+import { Icon } from "semantic-ui-react";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 
 const PostForm = () => {
-  const { addPost } = useContext(BlogContext);
   const [form, setForm] = useState({
-    body: ""
+    body: "",
   });
 
-  const handleInput = e => {
+  const dispatch = useDispatch();
+  const added_post = useSelector(({ posts: { added_post } }) => added_post);
+  useEffect(() => {}, [added_post]);
+
+  const handleInput = (e) => {
     const { value, name } = e.target;
     setForm({
       ...form,
-      [name]: value
+      [name]: value,
     });
   };
 
-  const onsubmit = e => {
+  const onsubmit = (e) => {
     e.preventDefault();
-    addPost(form);
+    addPost(dispatch, form);
     setForm({
-      body: ""
+      body: "",
     });
   };
 
   return (
-    <Form>
-      <form onSubmit={onsubmit}>
-        <div className='input-group'>
-          <i className='fas fa-blog icon'></i>
-          <input
-            type='text'
-            name='body'
-            placeholder='What is on your mind!!!'
-            onChange={handleInput}
-          />
-        </div>
-      </form>
+    <Form onSubmit={onsubmit}>
+      <div className='input-group'>
+        <Icon name='comment' className='icon' size='big' />
+        <input
+          type='text'
+          name='body'
+          placeholder='What is on your mind!!!'
+          onChange={handleInput}
+        />
+      </div>
     </Form>
   );
 };
 
-const Form = styled.div`
-  padding: 2% 20%;
-  form {
+export const Form = styled.form`
+  padding: 2% 10%;
+  width: 100%;
+  .input-group {
     width: 100%;
-    .input-group {
+    display: flex;
+    position: relative;
+
+    .icon {
+      font-size: 2rem;
+      position: absolute;
+      top: 25%;
+      left: 1%;
+      color: #4267b2;
+    }
+    input {
       width: 100%;
-      display: flex;
-      position: relative;
-      .icon {
-        font-size: 2.5rem;
-        position: absolute;
-        top: 25%;
-        left: 1%;
-        color: #4267b2;
-      }
-      input {
-        width: 100%;
-        padding: 30px 20px 30px 3.5rem;
-        border: 0.3px solid #999;
-        border-radius: 5px;
-        box-shadow: 0 5px 25px #eee;
-        font-size: 1.5rem;
-        outline: none;
-      }
+      padding: 30px 20px 30px 3.5rem;
+      border: 0.3px solid #999;
+      border-radius: 5px;
+      box-shadow: 0 5px 25px #eee;
+      font-size: 1.5rem;
+      outline: none;
     }
   }
 `;

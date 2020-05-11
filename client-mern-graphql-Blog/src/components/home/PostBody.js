@@ -1,32 +1,57 @@
-import React, { useContext } from "react";
+import React from "react";
 import styled from "styled-components";
-import Post from "./Post";
-import PostForm from "./PostForm";
-import { BlogContext } from "../blogContext/BlogProvider";
+import { Button, Label, Icon } from "semantic-ui-react";
+import { useSelector, useDispatch } from "react-redux";
+import { likePost } from "../BlogRedux/store";
 
-const PostBody = () => {
-  const { posts } = useContext(BlogContext);
-  const PostComponent = posts && posts.map(post => <Post key={post._id} post={post} />);
+const PostCard = ({ post }) => {
+  const dispatch = useDispatch();
+  const handleLikes = () => {
+    likePost(dispatch, post._id);
+  };
   return (
-    <>
-      <H1>
-        <i className='fa fa-plus'></i> Create Post
-      </H1>
-      <PostForm />
-      <Grid>
-        {PostComponent}
-      </Grid>
-    </>
+    <Container>
+      <Row>
+        <H1>{post.body}</H1>
+        <Buttons>
+          <Button as='div' labelPosition='right' onClick={handleLikes}>
+            <Button icon color='red'>
+              <Icon name='heart' />
+            </Button>
+            <Label as='a' basic pointing='left' color='red'>
+              {post.likes.length}
+            </Label>
+          </Button>
+          <Button as='div' labelPosition='left'>
+            <Label as='a' basic color='blue'>
+              {post.comments.length}
+            </Label>
+            <Button icon color='blue'>
+              <Icon name='comments' />
+            </Button>
+          </Button>
+        </Buttons>
+      </Row>
+    </Container>
   );
 };
 
-const Grid = styled.div`
-  display: grid;
-  padding: 2% 20%;
+const Container = styled.div`
+  padding: 0.5rem 10% 0 10%;
+`;
+const Buttons = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+const Row = styled.div`
+  padding: 1em;
+  border-radius: 0.7em;
+  background: #ffffff;
+  box-shadow: 0 5px 25px #eee;
 `;
 
 const H1 = styled.h1`
-  padding: 0.5rem 20% 0 20%;
+  /* padding: 0.5rem 10% 0 10%; */
   font-size: 1.5rem;
   color: #777;
   i {
@@ -34,4 +59,4 @@ const H1 = styled.h1`
   }
 `;
 
-export default PostBody;
+export default PostCard;

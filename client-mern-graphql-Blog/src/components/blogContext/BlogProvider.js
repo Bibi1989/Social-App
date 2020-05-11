@@ -6,7 +6,8 @@ import {
   ADD_POST,
   LIKE_POST,
   SINGLE_POST,
-  CREATE_COMMENT
+  CREATE_COMMENT,
+  DELETE_POST
 } from "./blogTypes";
 
 export const BlogContext = createContext();
@@ -17,7 +18,8 @@ const initialState = {
   like_post: {},
   single_post: {},
   comments: [],
-  created_comment: {}
+  created_comment: {},
+  delete_message: ""
 };
 
 export const BlogProvider = ({ children }) => {
@@ -104,10 +106,10 @@ export const BlogProvider = ({ children }) => {
   const createComment = async (body, id) => {
     const token = sessionStorage.getItem("blog");
     try {
-      setIII(id)
+      setIII(id);
       const response = await axios.post(
         `http://localhost:5005/api/comments/${id}`,
-        {body},
+        { body },
         {
           headers: {
             "Content-Type": "application/json",
@@ -115,21 +117,41 @@ export const BlogProvider = ({ children }) => {
           }
         }
       );
-      console.log(response)
       dispatch({ type: CREATE_COMMENT, payload: response.data.data });
     } catch (error) {}
   };
 
-  
+  const deletePost = async id => {
+    const token = sessionStorage.getItem("blog");
+    try {
+      const response = await axios.delete(
+        `http://localhost:5005/api/posts/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            auth: token
+          }
+        }
+      );
+      console.log(response.data.data);
+      dispatch({ type: DELETE_POST, payload: response.data });
+    } catch (error) {}
+  };
+
+  console.log(state.posts[0]);
+
   useEffect(() => {
     getPosts();
+    getAPost();
   }, [tracker.updateState]);
   return (
     <BlogContext.Provider
       value={{
+        getPosts,
         posts: state.posts[0],
         addPost,
         likePost,
+        deletePost,
         like_style: tracker.like_style,
         single_post: state.single_post,
         getAPost,

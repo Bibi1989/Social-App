@@ -18,13 +18,13 @@ const Comments = () => {
   const { commentId } = useParams();
   useEffect(() => {
     getAPost(commentId);
-  }, [tracker]);
+  }, [tracker, commentId]);
 
   const onsubmit = e => {
     e.preventDefault();
-    createComment(form, commentId);
     setTracker(!tracker);
     setForm("");
+    createComment(form, commentId);
   };
 
   const ShowComment = comment.map((c, i) => <Comment key={i} c={c} />);
@@ -82,8 +82,8 @@ const Comments = () => {
 };
 
 const Div = styled.div`
-    padding: 0 20%;
-`
+  padding: 0 20%;
+`;
 
 const SubGrid = styled.div`
   padding: 2% 15%;

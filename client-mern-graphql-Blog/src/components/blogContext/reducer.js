@@ -1,5 +1,12 @@
 import React from "react";
-import { ADD_POST, GET_POSTS, LIKE_POST, SINGLE_POST, CREATE_COMMENT } from "./blogTypes";
+import {
+  ADD_POST,
+  GET_POSTS,
+  LIKE_POST,
+  SINGLE_POST,
+  CREATE_COMMENT,
+  DELETE_POST
+} from "./blogTypes";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -27,6 +34,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         created_comment: action.payload
+      };
+    case DELETE_POST:
+      return {
+        ...state,
+        delete_msg: action.payload
       };
     default:
       return state;
