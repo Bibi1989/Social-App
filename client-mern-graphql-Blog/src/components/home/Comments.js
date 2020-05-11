@@ -1,180 +1,120 @@
 import React, { useEffect, useContext, useState } from "react";
 import { useParams } from "react-router-dom";
-import { BlogContext } from "../blogContext/BlogProvider";
 import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
 import moment from "moment";
+import { Form } from "./PostForm";
+import { Icon, Button, Label } from "semantic-ui-react";
+import { getAPost, createComment } from "../BlogRedux/store";
+import { Buttons, H1 } from "./PostBody";
 
 const Comments = () => {
-  const {
-    getAPost,
-    single_post,
-    likePost,
-    comment,
-    like,
-    createComment
-  } = useContext(BlogContext);
-  const [form, setForm] = useState("");
-  const [tracker, setTracker] = useState(false);
   const { commentId } = useParams();
+  const dispatch = useDispatch();
+  const [form, setForm] = useState("");
+  const post = useSelector(({ posts: { post } }) => post);
+  const added_comment = useSelector(
+    ({ posts: { added_comment } }) => added_comment
+  );
   useEffect(() => {
-    getAPost(commentId);
-  }, [tracker, commentId]);
-
-  const onsubmit = e => {
-    e.preventDefault();
-    setTracker(!tracker);
-    setForm("");
-    createComment(form, commentId);
+    getAPost(dispatch, commentId);
+  }, [added_comment]);
+  const handleInput = (e) => {
+    const { value, name } = e.target;
+    console.log(value);
+    setForm(value);
   };
+  console.log({ post });
 
-  const ShowComment = comment.map((c, i) => <Comment key={i} c={c} />);
+  const onsubmit = (e) => {
+    e.preventDefault();
 
+    createComment(dispatch, form, commentId);
+    setForm({
+      body: "",
+    });
+  };
   return (
-    <div>
-      <SubGrid>
-        <div className='user'>
-          {/* <p className='avatar'>{single_post.username}</p> */}
-          <div>
-            <p>{single_post.username}</p>
-            <p className='date'>
-              <span>
-                {moment(single_post.createdAt).fromNow(true)}{" "}
-                <i className='fas fa-users'></i>
-              </span>
-            </p>
-          </div>
+    <Container>
+      <Row>
+        <div className='post'>
+          <H1>{post !== null && post.body}</H1>
+          <Buttons>
+            <Button as='div' labelPosition='right'>
+              <Button icon color='red'>
+                <Icon name='heart' />
+              </Button>
+              <Label as='a' basic pointing='left' color='red'>
+                {post !== null && post.likes.length}
+              </Label>
+            </Button>
+            <Button as='div' labelPosition='left'>
+              <Label as='a' basic color='blue'>
+                {post !== null && post.comments.length}
+              </Label>
+              <Button icon color='blue'>
+                <Icon name='comments' />
+              </Button>
+            </Button>
+          </Buttons>
         </div>
-        <div className='body'>
-          <p>{single_post.body}</p>
+      </Row>
+      <Form onSubmit={onsubmit}>
+        <div className='input-group'>
+          <Icon name='comment' className='icon' size='big' />
+          <input
+            type='text'
+            name='body'
+            placeholder='Comment on this post!!!'
+            onChange={handleInput}
+          />
         </div>
-        <div className='comment'>
-          <span onClick={() => likePost(single_post._id)}>
-            <i className='fas fa-heart'></i> {like.length}
-          </span>
-          <div>
-            <span style={{ color: "orangered", paddingRight: "1.3rem" }}>
-              <i className='fas fa-trash'></i>
-            </span>
-            <span>
-              <i className='fas fa-comments'></i> {comment.length}
-            </span>
-          </div>
-        </div>
-      </SubGrid>
-
-      <Form>
-        <form onSubmit={onsubmit}>
-          <div className='input-group'>
-            <i className='fas fa-blog icon'></i>
-            <input
-              type='text'
-              name='body'
-              placeholder='What is on your mind!!!'
-              onChange={e => setForm(e.target.value)}
-            />
-          </div>
-        </form>
       </Form>
-
-      <Div>{ShowComment}</Div>
-    </div>
+      {post !== null &&
+        post.comments.map((comment) => (
+          <Comment comment={comment !== null && comment} />
+        ))}
+    </Container>
   );
 };
 
-const Div = styled.div`
-  padding: 0 20%;
+export const Container = styled.div``;
+export const SubGrid = styled.div`
+  max-width: 80%;
+  background: #ffffff;
+  margin: auto;
+  padding: 1em;
+  border-radius: 0.8em;
+  margin-bottom: 0.8em;
 `;
+export const Row = styled.div`
+  padding: 2% 10%;
 
-const SubGrid = styled.div`
-  padding: 2% 15%;
-  border-radius: 5px;
-  border: 0.3px solid #999;
-  box-shadow: 0 2px 25px #eee;
-  margin: 0.5% 0;
-  .user {
-    display: flex;
-    padding-bottom: 1rem;
-    .avatar {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      border: 1px solid #999;
-      margin-right: 20px;
-      font-size: 1.5rem;
-    }
-    p:first-child {
-      color: #4267b2;
-    }
-    .date {
-      font-size: 0.7rem;
-    }
-  }
-  .body {
-    padding: 0rem 4rem 1.1rem 0rem;
-  }
-  .comment {
-    display: flex;
-    justify-content: space-between;
-    border-top: 1px solid #999;
-    border-bottom: 1px solid #999;
-    padding: 5px 0;
-    span:first-child {
-      /* color: #999; */
-    }
-    .trash {
-      padding-right: 1.3rem;
-      color: #ff0000;
-    }
+  .post {
+    background: #ffffff;
+    padding: 1em;
+    border-radius: 0.8em;
   }
 `;
-
-const Form = styled.div`
-  padding: 2% 20%;
-  form {
-    width: 100%;
-    .input-group {
-      width: 100%;
-      display: flex;
-      position: relative;
-      .icon {
-        font-size: 2.5rem;
-        position: absolute;
-        top: 25%;
-        left: 1%;
-        color: #4267b2;
-      }
-      input {
-        width: 100%;
-        padding: 30px 20px 30px 3.5rem;
-        border: 0.3px solid #999;
-        border-radius: 5px;
-        box-shadow: 0 5px 25px #eee;
-        font-size: 1.5rem;
-        outline: none;
-      }
-    }
-  }
-`;
+// export const H1 = styled.h1``;
 
 export default Comments;
 
-const Comment = ({ c }) => (
+const Comment = ({ comment }) => (
   <SubGrid>
     <div className='user'>
       <div>
-        <p>{c.username}</p>
+        <p>{comment.username}</p>
+        <div className='body'>
+          <p>{comment.body}</p>
+        </div>
         <p className='date'>
           <span>
-            {moment(c.createdAt).fromNow(true)} <i className='fas fa-users'></i>
+            {moment(comment.createdAt).fromNow(true)}{" "}
+            <i className='fas fa-users'></i>
           </span>
         </p>
       </div>
-    </div>
-    <div className='body'>
-      <p>{c.body}</p>
     </div>
   </SubGrid>
 );
